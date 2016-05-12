@@ -1,0 +1,440 @@
+using Gallio.Framework;
+using Gallio.Model;
+using MbUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
+using System;
+using SauceLabs_UI_RegressionSuites.Common;
+using SauceLabs_UI_RegressionSuites.RegManagerPageObjects;
+using SauceLabs_UI_RegressionSuites.SolutionBuilderPageObjects;
+
+namespace SolutionBuilderTESTS
+{
+    
+    #region Test Fixture
+
+    //Batch Browsers specifications for SauceLabs testing
+    [TestFixture]
+    [Header("browser", "version", "platform", "deviceName", "deviceOrientation")]
+    [Row("firefox", "latest", "Windows 7", "", "")]
+    [Row("chrome", "latest", "Windows 8.1", "", "")]
+    [Row("safari", "latest", "OS X 10.11", "", "")]
+    [Row("iPhone", "8.0", "OS X 10.10", "iPad 2", "portrait")]
+    [Row("MicrosoftEdge", "latest", "Windows 10", "", "")]
+    [Row("iPhone", "9.2", "OS X 10.10", "iPad Air", "landscape")]
+    [Row("iPhone", "9.2", "OS X 10.10", "iPhone 6", "portrait")]
+    [Row("chrome", "latest-1", "Windows 7", "", "")]
+    [Row("Internet Explorer", "11", "Windows 10", "", "")]
+    [Row("Internet Explorer", "11", "Windows 8.1", "", "")]
+
+    #endregion
+
+    public class CommissionPage
+    {
+        #region Setup and Teardown
+
+        /// Setup the Driver session and configure SauceLabs:
+        private IWebDriver Setup(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Construct the url to sauce labs:
+            Uri commandExecutorUri = new Uri("http://ondemand.saucelabs.com/wd/hub");
+
+            // Set up the desired capabilities:
+            DesiredCapabilities caps = new DesiredCapabilities(browser, version, Platform.CurrentPlatform);
+            caps.SetCapability(CapabilityType.BrowserName, browser);
+            caps.SetCapability(CapabilityType.Version, version);
+            caps.SetCapability(CapabilityType.Platform, platform);
+            caps.SetCapability("platform", platform); // operating system
+            caps.SetCapability("deviceName", deviceName);
+            caps.SetCapability("deviceOrientation", deviceOrientation);
+            
+            //Including access details:
+            caps.SetCapability("username", Constants.SAUCE_LABS_ACCOUNT_NAME); // supply sauce labs username
+            caps.SetCapability("accessKey", Constants.SAUCE_LABS_ACCOUNT_KEY);  // supply sauce labs account key
+            caps.SetCapability("name", TestContext.CurrentContext.Test.Name); // give the test a name
+            caps.SetCapability("tunnelIdentifier", Constants.SAUCE_LABS_SPECIFIED_TUNNEL); //the required tunnel (for RnD)
+            
+            //Start a new remote web driver session on sauce labs:
+            var driver = new RemoteWebDriver(commandExecutorUri, caps, TimeSpan.FromSeconds(240));
+            //driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(90));
+            //driver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(90));
+            //driver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(90));
+            return driver;
+        }
+
+        //Get to Commission Page
+        public void RouteToCommission(IWebDriver driver)
+        {
+            //Call Shortcut to Add Client - validate 
+            var support = new DashboardPage();
+            support.RouteToDashboard(driver);
+
+            //Add New Quote
+            var dashboard = new DashboardPageObjects();
+            dashboard.NewQuote(driver);
+
+            //Select WOL and wait for screen to load - validate page
+            var benefit = new BenefitSummaryPageObjects();
+            benefit.EditCommission(driver);
+        }
+
+        // Cleanup task called to tear down test and post results
+        public void CleanUp(IWebDriver driver)
+        {
+            // Get status
+            bool passed = TestContext.CurrentContext.Outcome.Status == TestStatus.Passed;
+            try
+            {
+                // Log the results to SauceLabs
+                ((IJavaScriptExecutor)driver).ExecuteScript("sauce:job-result=" + (passed ? "passed" : "failed"));
+            }
+            finally
+            {
+                // Terminate WebDriver session
+                driver.Quit();
+            }
+        }
+
+        #endregion
+
+        #region Tests
+
+        ////TEST ONE
+        //Check Client History Link
+        [Test, Parallelizable, Description("Link to Dashboard")]
+        public void LinkToDashboardCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click Client Search Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            common.ClientSearchButtonDialogue(driver);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.CHANGES;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select Client Search and exit
+            common.ClientSearchButtonDialogue(driver);
+            string pageValidator = "clientSearchInput";
+            common.DialogueYes(driver);
+            common.SpinnerWait(driver, pageValidator);
+
+            //Validate dashboard page reached.
+            Assert.IsTrue(driver.FindElement(By.Id("resultsSearchTitle")).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+        ////TEST TWO
+        //Client History
+        [Test, Parallelizable, Description("Client History Button")]
+        public void ClientHistoryButtonCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click client history Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            common.ClientHistoryButtonDialogue(driver);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.CHANGES;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select client history and exit
+            common.ClientHistoryButtonDialogue(driver);
+            common.DialogueYes(driver);
+            string pageValidator = "navigation-bar";
+            common.SpinnerWait(driver, pageValidator);
+
+            //Validate client histroy page reached.
+            Assert.IsTrue(driver.FindElement(By.Id("client-history")).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+        ////TEST THREE
+        //Add client button
+        [Test, Parallelizable, Description("Add Client Button")]
+        public void AddClientButtonCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click add client Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            common.AddClientButtonDialogue(driver);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.CHANGES;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select add client and exit
+            common.AddClientButtonDialogue(driver);
+            string pageValidator = "clientDetails";
+            common.DialogueYes(driver);
+            common.SpinnerWait(driver, pageValidator);
+
+            //Validate client details reached and page blank
+            string attribute = driver.FindElement(By.Id("firstlifetitle")).GetAttribute("value");
+            Assert.AreEqual(attribute, "");
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+        ////TEST FOUR
+        //Back to My Services using header button
+        [Test, Parallelizable, Description("Link Back to Services")]
+        public void MyServicesLinkCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click my services Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            common.MyServicesButtonDialogue(driver);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.CHANGES;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select myservices and exit
+            common.MyServicesButtonDialogue(driver);
+            common.DialogueYes(driver);
+            string pageValidator = "SolutionBuilder-btn";
+            common.GenericWait(driver, pageValidator);
+
+            //Validate my services page reached.
+            Assert.IsTrue(driver.FindElement(By.Id("Assureweb-btn")).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+        ////TEST FIVE
+        //Logout
+        [Test, Parallelizable, Description("Header Logout Button")]
+        public void LogoutButtonCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click Logout Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            common.LogoutButton(driver);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.LOGOUT;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select logout and exit
+            common.LogoutButton(driver);
+            common.DialogueYes(driver);
+            string pageValidator = "UserName";
+            common.GenericWait(driver, pageValidator);
+
+            //Validate login page reached.
+            Assert.IsTrue(driver.FindElement(By.Id("signin-btn")).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+        ////TEST SIX
+        //Click the View/Edit client button
+        [Test, Parallelizable, Description("View Edit Client Button")]
+        public void ViewEditClientButtonCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click view edit client Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            common.EditClientButtonDialogue(driver);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.CHANGES;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select viewedit client and exit
+            common.EditClientButtonDialogue(driver);
+            string pageValidator = "clientDetails";
+            common.DialogueYes(driver);
+            common.SpinnerWait(driver, pageValidator);
+
+            //Validate client details page reached - Find field and ensure contains "Mr"
+            string attribute = driver.FindElement(By.Id("firstlifetitle")).GetAttribute("value");
+            Assert.AreEqual(attribute, "Mr");
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+
+        ////TEST EIGHT
+        //DO I get a warnign dialogue when I try to cancel?
+        [Test, Parallelizable, Description("Cancel Button")]
+        public void CancelButtonCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Click cancel Button - open dialogue
+            var common = new CommonSolutionBuilderPageObjects();
+            string benefitId = "commission";
+            common.BenefitCancelButton(driver, benefitId);
+
+            //Summon Validator, Lord of Validation
+            string messageText = Constants.CHANGES;
+            common.ValidateDialogueDisplayText(driver, messageText);
+
+            //Cancel dialogue
+            common.DialogueClose(driver);
+
+            //Re-select cancel and exit
+            common.BenefitCancelButton(driver, benefitId);
+            string pageValidator = "benefit-summary";
+            common.DialogueYes(driver);
+            common.SpinnerWait(driver, pageValidator);
+
+            //Validate client details page reached - Find field and ensure contains "Mr"
+            Assert.IsTrue(driver.FindElement(By.Id("commission-button")).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+
+        ////TEST NINE
+        //Check form validation standard PART ONE
+        [Test, Parallelizable, Description("Form Validation Standard Elements")]
+        public void FormValidationCommission(string browser, string version, string platform, string deviceName, string deviceOrientation)
+        {
+            // Call Setup
+            var driver = Setup(browser, version, platform, deviceName, deviceOrientation);
+
+            //Use Route To Commission to get to Commission Page:
+            var setupRoute = new CommissionPage();
+            setupRoute.RouteToCommission(driver);
+
+            //Run validation steps to check all functions are available
+            var commission = new CommissionPageObjects();
+            commission.SelectNil(driver);
+            
+            //Assert that input is disabled
+            Assert.IsFalse(driver.FindElement(By.Id("percentageInput")).Enabled);
+            
+            //Assert that indemnity buttons are disabled
+            string attributeName = "disabled";
+            string requiredYes = driver.FindElement(By.Id("indemnityRequiredYes")).GetAttribute(attributeName);
+            Assert.AreEqual(requiredYes, "true");
+            string requiredNo = driver.FindElement(By.Id("indemnityRequiredNo")).GetAttribute(attributeName);
+            Assert.AreEqual(requiredNo, "true");
+
+            //Click Full
+            commission.SelectFull(driver);
+            
+            //Assert indemnity is enabled, input still disabled
+            Assert.IsFalse(driver.FindElement(By.Id("percentageInput")).Enabled);
+            Assert.IsTrue(driver.FindElement(By.Id("indemnityRequiredYes")).Enabled);
+            Assert.IsTrue(driver.FindElement(By.Id("indemnityRequiredNo")).Enabled);
+
+            //Click No, Click Yes
+            commission.IndemnityNo(driver);
+            commission.IndemnityYes(driver);
+
+            //Click Modified
+            commission.SelectModified(driver);
+            
+            //Assert percentage available
+            Assert.IsTrue(driver.FindElement(By.Id("percentageInput")).Enabled);
+
+            //Input some junk (clears field)
+            var inputPercentage = "tu";
+            commission.PercentageInput(driver, inputPercentage);
+            
+            //Assert that error text is thrown
+            string validationText = driver.FindElement(By.XPath(".//*[@id='commissionForm']/div[4]/div[2]/span")).Text.Trim();
+            Assert.AreEqual(validationText, "Please enter a whole number between 1 - 99");
+
+            //Try to Save
+            commission.SaveBenefitCommission(driver);
+            //Assert validation header
+            string validationHeader = driver.FindElement(By.XPath(".//*[@id='commissionForm']/div[2]/div/div[2]")).Text.Trim();
+            Assert.AreEqual(validationHeader, "Please correct the issues highlighted below");
+
+            //Input a valid percentage (clears field)
+            inputPercentage = "5";
+            commission.PercentageInput(driver, inputPercentage);
+
+            //Save
+            commission.SaveBenefitCommission(driver);
+
+            //generic wait
+            string pageValidator = "benefit-summary";
+            var common = new CommonSolutionBuilderPageObjects();
+            common.GenericWait(driver, pageValidator);
+
+            //Assert Summary page reached
+            Assert.IsTrue(driver.FindElement(By.XPath(".//*[@id='benefit-summary']/div/div[1]/div[1]/div[1]/h4")).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
+
+        #endregion
+    }
+}
