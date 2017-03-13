@@ -15,8 +15,8 @@
 
 
         //Username & Password:
-        internal const string USERNAME = "ncollins";
-        internal const string PASSWORD = "ncollinsSadeX";
+        internal const string USERNAME = "username";
+        internal const string PASSWORD = "password";
 
         
 
@@ -40,8 +40,8 @@
         // - this is Openworks FCA number, used for access to the Registration Page
 
         //SauceLabs account details:
-        internal const string SAUCE_LABS_ACCOUNT_NAME = "ipipelineuk";
-        internal const string SAUCE_LABS_ACCOUNT_KEY = "badd14c1-a5e6-414b-a273-310213f73254";
+        internal const string SAUCE_LABS_ACCOUNT_NAME = "companylogin";
+        internal const string SAUCE_LABS_ACCOUNT_KEY = "accesskey";
 
         //Other environment variables: 
         internal const string BASEURL = "https://" + ENV + ".ipipeline.uk.com/";
