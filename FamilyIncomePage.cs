@@ -214,7 +214,7 @@ namespace SolutionBuilderClientDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Validate login page reached.
@@ -393,7 +393,7 @@ namespace SolutionBuilderClientDetailsTESTS
 
             //Assert that error text is displayed:
             string validationTextLife = driver.FindElement(By.XPath(".//*[@id='fibFormnew']/div[8]/div[2]")).Text.Trim();
-            Assert.AreEqual(validationTextLife, "Please enter a whole number between 1,000 and 5,000,000");
+            Assert.AreEqual(validationTextLife, "Please enter a whole number between 1,000 and 50,000,000");
 
             //Insert premium info Life cover amount
             var lifeEnterAmountField = driver.FindElement(By.Id("fibLifeCoverAmountnew"));
@@ -413,7 +413,7 @@ namespace SolutionBuilderClientDetailsTESTS
 
             //Assert that error text is displayed:
             string validationTextCIC = driver.FindElement(By.XPath(".//*[@id='fibFormnew']/div[9]/div[2]")).Text.Trim();
-            Assert.AreEqual(validationTextCIC, "Please enter a whole number between 1,000 and 5,000,000");
+            Assert.AreEqual(validationTextCIC, "Please enter a whole number between 1,000 and 50,000,000");
 
             //CHeck that the field is now accepting values
             string cicEnterAmount = driver.FindElement(By.Id("fibCriticalIllnessAmountnew")).GetAttribute(attributeNameRequired);

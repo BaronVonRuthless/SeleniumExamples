@@ -20,9 +20,9 @@ namespace Common
 
     public class CommonSupportObjects
     {
-        ////CONFIRM PAGE TITLE
-        //Confirm page title
-        public void ConfirmPageTitleLogin(IWebDriver driver, string expectedPage)
+        ////GET PAGE TITLE
+        //Return page title as trimmed string
+        public void ConfirmPageTitle(IWebDriver driver, string expectedPage)
         {
             string pageTitle = driver.Title;
             if (!pageTitle.Equals(expectedPage))
@@ -30,7 +30,6 @@ namespace Common
                 throw new InvalidOperationException("This is not the expected page. Declared page title is: "
                                                     + pageTitle);
             }
-
         }
 
         ////TABLET CLICKER
@@ -274,8 +273,6 @@ namespace Common
 
             return screenshotBase64;
         }
-
-
 
     }
 }

@@ -168,7 +168,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Validate login page reached.
@@ -240,9 +240,10 @@ namespace SolutionBuilderQuoteDetailsTESTS
 
             //Click help icon
             var common = new CommonSolutionBuilderPageObjects();
-            common.HelpOverlayOpenResults(driver);
+            string validationPath = "html/body/div[7]/div";
+            common.HelpOverlayOpenValidateByPath(driver, validationPath);
             string pageValidator = "menu-builder-results";
-            common.HelpOverlayClose(driver, pageValidator);
+            common.HelpOverlayCloseGeneric(driver, pageValidator);
             Assert.IsTrue(driver.Title.Equals("Solution Builder"));
 
             //Call Cleanup
@@ -311,7 +312,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
 
             //Validate print page by address
             string getTitle = driver.Title.ToString();
-            Assert.Contains(getTitle, "ResultsSnapShot");
+            Assert.Contains(getTitle, "ResultsSnapshot");
 
             //Close Window and validate return
             new CommonSolutionBuilderPageObjects().NewWindowClose(driver, thisWindow);
@@ -340,11 +341,13 @@ namespace SolutionBuilderQuoteDetailsTESTS
             commonResults.FullDetailsMultiOpen(driver, benefitType, benefitInstance);
 
             //Wait to load, just in case:
-            string pageValidator = "resultsSummaryInputsMenuBuilder_" + benefitType + benefitInstance;
+            //string pageValidator = "resultsSummaryInputsMenuBuilder_" + benefitType + benefitInstance;
+            string pageValidator = "resultsInputBenefitSummaryTitle";
             new CommonSolutionBuilderPageObjects().GenericWait(driver, pageValidator);
 
             //Confirm details:
-            string benefitTitle = commonResults.FullDetailsReadTitleMulti(driver, benefitType, benefitInstance);
+            //string benefitTitle = commonResults.FullDetailsReadTitleMulti(driver, benefitType, benefitInstance);
+            string benefitTitle = commonResults.FullDetailsReadTitleSingle(driver);
             Assert.Contains(benefitTitle, "Level Term Assurance");
 
             //Close with this:

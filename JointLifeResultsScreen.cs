@@ -173,7 +173,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Validate login page reached.
@@ -245,9 +245,10 @@ namespace SolutionBuilderQuoteDetailsTESTS
 
             //Click help icon
             var common = new CommonSolutionBuilderPageObjects();
-            common.HelpOverlayOpenResults(driver);
+            string validationPath = "html/body/div[7]/div";
+            common.HelpOverlayOpenValidateByPath(driver, validationPath);
             string pageValidator = "resultsSummaryFullDetails";
-            common.HelpOverlayClose(driver, pageValidator);
+            common.HelpOverlayCloseGeneric(driver, pageValidator);
             Assert.IsTrue(driver.Title.Equals("Solution Builder"));
 
             //Call Cleanup
@@ -312,13 +313,15 @@ namespace SolutionBuilderQuoteDetailsTESTS
             string thisWindow = new CommonResultsPageObjects().Print(driver);
 
             //Generic wait
-            string pageValidator = "pageContainer1";
+            //string pageValidator = "pageContainer1";
             var common = new CommonSolutionBuilderPageObjects();
-            common.GenericWait(driver, pageValidator);
+            //common.GenericWait(driver, pageValidator);
+            driver.WaitForUpTo(60, "Didn't make it to the expected page. Did not find: results PDF.")
+                .Until(ExpectedConditions.UrlContains("GetResultsPagePdfPrint"));
 
             //Validate print page by address
             string getTitle = driver.Title.ToString();
-            Assert.Contains(getTitle, "ResultsSnapShot");
+            Assert.Contains(getTitle, "ResultsSnapshot");
 
             //Close Window and validate return
             common.NewWindowClose(driver, thisWindow);

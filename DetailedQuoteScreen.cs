@@ -175,7 +175,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
             //Assert that the screen updates as expected
             var lifeQuote = new LifeQuotePageObjects();
             string screenText = lifeQuote.ApplyOptionsMessageText(driver);
-            string expectedMessage = Constants.LQ_DECLINED;
+            string expectedMessage = Constants.LQ_CONTACT;
             Assert.AreEqual(screenText, expectedMessage);
 
             //Close

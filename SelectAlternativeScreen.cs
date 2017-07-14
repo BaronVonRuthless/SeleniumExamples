@@ -376,7 +376,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Validate login page reached.
@@ -437,8 +437,10 @@ namespace SolutionBuilderQuoteDetailsTESTS
             CleanUp(driver);
         }
 
-        //TEST TWELVE
-        //Help Overlay
+
+
+        //TEST TWELVE - .1
+        //Help Overlay - SELECT ALTERNATIVE
         [Test, Parallelizable, Description("Link to Help Overlay")]
         public void HelpLinkSelectAlternativeSR51(string appiumVersion, string browserName, string version, string platform, string platformVersion, string platformName, string deviceName, string deviceOrientation)
         {
@@ -447,19 +449,57 @@ namespace SolutionBuilderQuoteDetailsTESTS
             var selectAlternative = new SelectAlternativePageObjects();
 
             //Call route to alternative
-            string benefitRequired = "DTA";
+            string benefitRequired = "IP";
             RouteToAlternativeSR51(driver, benefitRequired, browserName);
 
-            //Click help icon
+            //Click help icon & validate arrival
             var common = new CommonSolutionBuilderPageObjects();
-            common.HelpOverlayOpenResults(driver);
-            string pageValidator = "resultsSummaryFullDetails";
-            common.HelpOverlayClose(driver, pageValidator);
-            Assert.IsTrue(driver.Title.Equals("Solution Builder"));
+            string validationElement = "filter-premium-type-col";
+            common.HelpOverlayOpenValidateById(driver, validationElement);
+            Assert.IsTrue(driver.FindElement(By.Id(validationElement)).Displayed);
+
+            //Then return to Select Alternative screen
+            string pageValidator = "backToBenefitsButton";
+            string buttonPath = "html/body/div[2]/hidden/div/div/button";
+            common.HelpOverlayCloseSpecified(driver, pageValidator, buttonPath);
+            Assert.IsTrue(driver.FindElement(By.Id(pageValidator)).Displayed);
 
             //Call Cleanup
             CleanUp(driver);
         }
+
+        //TEST TWELVE - .2
+        //Help Overlay - PRODUCTS NOT QUOTING
+        [Test, Parallelizable, Description("Link to Help Overlay")]
+        public void HelpLinkProvidersNotQuotingSR51(string appiumVersion, string browserName, string version, string platform, string platformVersion, string platformName, string deviceName, string deviceOrientation)
+        {
+            /// Call Setup + required objects
+            var driver = Setup(appiumVersion, browserName, version, platform, platformVersion, platformName, deviceName, deviceOrientation);
+            var selectAlternative = new SelectAlternativePageObjects();
+
+            //Call route to alternative
+            string benefitRequired = "IP";
+            RouteToAlternativeSR51(driver, benefitRequired, browserName);
+
+            //Transition to PNQ
+            selectAlternative.ProvidersNotQuotingSelectSR51(driver);
+
+            //Click help icon & validate arrival
+            var common = new CommonSolutionBuilderPageObjects();
+            string validationPath = "html/body/div[2]/hidden/div/div/button";
+            common.HelpOverlayOpenValidateByPath(driver, validationPath);
+            Assert.IsTrue(driver.FindElement(By.XPath(validationPath)).Displayed);
+
+            //Then return to Select Alternative screen
+            string pageValidator = "backToBenefitsButton";
+            string buttonPath = "html/body/div[2]/hidden/div/div/button";
+            common.HelpOverlayCloseSpecified(driver, pageValidator, buttonPath);
+            Assert.IsTrue(driver.FindElement(By.Id(pageValidator)).Displayed);
+
+            //Call Cleanup
+            CleanUp(driver);
+        }
+
 
 
         //TEST THIRTEEN
@@ -473,7 +513,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
             var commonObjects = new CommonSupportObjects();
 
             //Call route to alternative
-            string benefitRequired = "FIB";
+            string benefitRequired = "LTA";
             RouteToAlternativeSR51(driver, benefitRequired, browserName);
 
             //Choose second option
@@ -481,7 +521,11 @@ namespace SolutionBuilderQuoteDetailsTESTS
             selectAlternative.SelectAlternativeSelect(driver, productInTable);
 
             //Assert return to the Results screen, all displayed
-            bool returnResults = driver.FindElement(By.Id("premiumCellMenuButton")).Displayed;
+            string pageValidator = "premiumCellMenuButton";
+            new CommonSolutionBuilderPageObjects().GenericWait(driver, pageValidator);
+            
+            //bool returnResults = driver.FindElement(By.Id("premiumCellMenuButton")).Displayed;
+            bool returnResults = driver.FindElement(By.Id("resultsSummaryBenefitAndClientDetails")).Displayed;
             Assert.IsTrue(returnResults);
 
             //Call Cleanup
@@ -513,13 +557,25 @@ namespace SolutionBuilderQuoteDetailsTESTS
             bool reDrawR = driver.FindElement(By.Id("quote-result-reviewable_0")).Displayed;
             Assert.IsTrue(reDrawR);
 
-            //Hit All Premium types and check for a mix??
+            //Hit ALL Premiums and check redraw
             selectAlternative.SelectAlternativeFilterAllSR51(driver);
-            // g with ANY number?
-            // r with any number??
+            
+            //Check if Reviewable/Guaranteed is present:
+            string elementIdG = "quote-result-guaranteed_0";
+            bool GuaranteedPresent = commonObjects.ElementPresentConfirmById(driver, elementIdG);
 
-            //int testInt;
-            //bool isNumeric = int.TryParse("123", out testInt);
+            string elementIdR = "quote-result-reviewable_0";
+            bool ReviewablePresent = commonObjects.ElementPresentConfirmById(driver, elementIdR);
+
+            //Check that one of the results are returned:
+            if (GuaranteedPresent == true)
+            {
+                Assert.IsTrue(GuaranteedPresent);
+            }
+            else
+            {
+                Assert.IsTrue(ReviewablePresent);
+            }
 
             //Call Cleanup
             CleanUp(driver);
@@ -540,20 +596,25 @@ namespace SolutionBuilderQuoteDetailsTESTS
             string benefitRequired = "LTA";
             RouteToAlternativeSR51(driver, benefitRequired, browserName);
 
-            //Read out the content of the count badge and "if greater than 0" select and...
+            //Select PNQ...
+            selectAlternative.ProvidersNotQuotingSelectSR51(driver);
+            
+            //...and validate
+            int rowInstance = 0;
+            bool hitPnq = driver.FindElement(By.Id("pnqExclusionType_" + rowInstance)).Displayed;
+            Assert.IsTrue(hitPnq);
 
+            //Select to expand first row
+            selectAlternative.ProvidersNotQuotingExpandDetailsSR51(driver, rowInstance);
 
-
-
-            //Validate landing
-
-
-            //Select pnqProductRow_0 to expand first row
-
-            //Validate that pnq-more-details_0 is displayed
-
-            //Hit quote results to navigate back
-
+            //Validate that detailsa re displayed
+            bool expandOkay = driver.FindElement(By.Id("pnq-more-details_" + rowInstance)).Displayed;
+            Assert.IsTrue(expandOkay);
+ 
+            //Hit quote results to navigate back & check okay
+            selectAlternative.ProvidersQuotingSelectSR51(driver);
+            bool returnToQuotes = driver.FindElement(By.Id("quote-results-quote-button_0")).Displayed;
+            Assert.IsTrue(returnToQuotes);
 
             //Call Cleanup
             CleanUp(driver);
@@ -586,11 +647,13 @@ namespace SolutionBuilderQuoteDetailsTESTS
             Assert.IsTrue(reDrawPay);
 
             //Clear options and check page redraws okay
-            //selectAlternative.SelectAlternativeFilterLimitedPaymenSR51(driver);
-            //string firstElementId = "";
-            //string secondElementId = "";
-            //Assert.IsTrue(commonObjects.ElementOneOrElementTwoPresentById(driver, firstElementId, secondElementId));
-
+            selectAlternative.SelectAlternativeFilterLimitedPaymenSR51(driver);
+            //string firstElementId = "quote-result-age-banded_0";
+            //string secondElementId = "quote-result-limited-payment-period_0";
+            //BUT WITH ANY INT:
+            //bool reDrawAll = commonObjects.ElementOneOrElementTwoPresentById(driver, firstElementId, secondElementId)
+            //Assert.IsTrue(reDrawAll);
+            
             //Call Cleanup
             CleanUp(driver);
         }

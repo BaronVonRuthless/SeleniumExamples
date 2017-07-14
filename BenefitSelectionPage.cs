@@ -50,9 +50,11 @@ namespace SolutionBuilderClientDetailsTESTS
 
             //Click help icon
             var common = new CommonSolutionBuilderPageObjects();
-            common.HelpOverlayOpenBenefits(driver);
+            //string validationPath = "html/body/div[6]/div/div";
+            string validationPath = "html/body/div[2]/hidden/div/div/button";
+            common.HelpOverlayOpenValidateByPath(driver, validationPath);
             string pageValidator = "benefit-summary";
-            common.HelpOverlayClose(driver, pageValidator);
+            common.HelpOverlayCloseGeneric(driver, pageValidator);
             Assert.IsTrue(driver.Title.Equals("Solution Builder"));
 
             //Call Cleanup
@@ -206,7 +208,7 @@ namespace SolutionBuilderClientDetailsTESTS
             var common = new CommonSolutionBuilderPageObjects();
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Confirm login page reached

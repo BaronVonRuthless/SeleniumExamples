@@ -216,7 +216,7 @@ namespace SolutionBuilderClientDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Validate login page reached.
@@ -394,7 +394,7 @@ namespace SolutionBuilderClientDetailsTESTS
 
             //Assert that error text is displayed:
             string validationTextLife = driver.FindElement(By.XPath(".//*[@id='ltaFormnew']/div[8]/div[2]/span[1]")).Text.Trim();
-            Assert.AreEqual(validationTextLife, "Please enter a whole number between 1,000 and 5,000,000");
+            Assert.AreEqual(validationTextLife, "Please enter a whole number between 1,000 and 50,000,000");
 
             //Insert premium info Life cover amount
             var lifeEnterAmountField = driver.FindElement(By.Id("ltaLifeCoverAmountnew"));

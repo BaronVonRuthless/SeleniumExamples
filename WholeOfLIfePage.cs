@@ -214,7 +214,7 @@ namespace SolutionBuilderClientDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
             
             //Validate login page reached.

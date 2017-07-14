@@ -178,6 +178,7 @@ namespace SolutionBuilderQuoteDetailsPageObjects
         public void ProvidersNotQuotingSelectSR51(IWebDriver driver)
         {
             var notQuoting = driver.FindElement(By.Id("providersNotQuotingResultsCount"));
+            //premium-cell-not-quoted
             new CommonSupportObjects().TabletClick(notQuoting, driver);
 
             string pageValidator = "backToBenefitsButton";
@@ -189,11 +190,25 @@ namespace SolutionBuilderQuoteDetailsPageObjects
         public void ProvidersQuotingSelectSR51(IWebDriver driver)
         {
             var providersQuoting = driver.FindElement(By.Id("quoteResultsCount"));
+            //quote-results-badge
             new CommonSupportObjects().TabletClick(providersQuoting, driver);
 
             string pageValidator = "backToBenefitsButton";
             new CommonSolutionBuilderPageObjects().SpinnerWait(driver, pageValidator);
         }
+
+        //PNQ - EXPAND/HIDE DETAILS SECTION
+        //expandPnqRow_0
+        public void ProvidersNotQuotingExpandDetailsSR51(IWebDriver driver, int rowInstance)
+        {
+            var expandDetails = driver.FindElement(By.Id("expandPnqRow_" + rowInstance));
+            new CommonSupportObjects().TabletClick(expandDetails, driver);
+
+            string pageValidator = "backToBenefitsButton";
+            new CommonSolutionBuilderPageObjects().SpinnerWait(driver, pageValidator);
+        }
+        
+
 
     }
 }

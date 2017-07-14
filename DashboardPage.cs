@@ -7,6 +7,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using Common;
 using RegManagerPageObjects;
+using RegManagerTESTS;
 using SolutionBuilderClientDetailsPageObjects;
 
 namespace SolutionBuilderClientDetailsTESTS
@@ -23,9 +24,8 @@ namespace SolutionBuilderClientDetailsTESTS
         public void RouteToDashboard(IWebDriver driver)
         {
             // Use login methods to call page, validate and attempt login
-            var login = new LoginPageObjects();
-            login.GetLoginPage(driver);
-            login.LoginValidUser(driver);
+            var login = new LoginPage();
+            login.LoginDefaultUser(driver);
 
             //Login to Solutiuon Builder
             var myServices = new MyServicesPageObjects();
@@ -55,7 +55,7 @@ namespace SolutionBuilderClientDetailsTESTS
             var common = new CommonSolutionBuilderPageObjects();
             common.HelpOverlayOpenDashboard(driver);
             string pageValidator = "clientSearchInput";
-            common.HelpOverlayClose(driver, pageValidator);
+            common.HelpOverlayCloseGeneric(driver, pageValidator);
             Assert.IsTrue(driver.Title.Equals("Solution Builder"));
 
             //Call Cleanup
@@ -150,7 +150,7 @@ namespace SolutionBuilderClientDetailsTESTS
             var common = new CommonSolutionBuilderPageObjects();
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
             
             //Confirm login page reached
@@ -174,16 +174,18 @@ namespace SolutionBuilderClientDetailsTESTS
             var route = new DashboardPage();
             route.RouteToDashboard(driver); ;
 
-            var currentClient = driver.FindElement(By.XPath(".//*[@id='clientAndSearch']/div/div[2]/visible/div/ul/li[1]"));
-            currentClient.Text.Trim();
+            //var currentClient = driver.FindElement(By.XPath(".//*[@id='clientAndSearch']/div/div[2]/visible/div/ul/li[1]"));
+            //string currentClient = driver.FindElement(By.XPath(".//*[@id='clientAndSearch']/div/div[2]/hidden/div/ul/li[1]")).Text.Trim();
+            string firstClient = driver.FindElement(By.Id("clientSearchFirstLifeName_0")).Text.Trim();
+            string secondClient = driver.FindElement(By.Id("clientSearchSecondLifeName_0")).Text.Trim();
+            string currentClient = firstClient + " " + secondClient;
 
             //Click Client History validate page loads
             var dashboard = new DashboardPageObjects();
             dashboard.ClientHistoryFull(driver);
 
-            var clientHeader = driver.FindElement(By.XPath(".//*[@id='navigation-bar']/div/hidden/div/div/div[2]/div[2]/hidden/div/span"));
-            clientHeader.Text.Trim();
-
+            //Read page title and check correct client
+            string clientHeader = driver.FindElement(By.XPath(".//*[@id='navigation-bar']/div/hidden/div/div/div[2]/div[2]/hidden/div/span")).Text.Trim();
             Assert.AreEqual(currentClient, clientHeader);
 
             //Call Cleanup

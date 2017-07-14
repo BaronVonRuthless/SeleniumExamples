@@ -119,7 +119,7 @@ namespace Common
         public string BannerCheckMailTo(IWebDriver driver)
         {
             //Mailto Link
-            string customerMail = driver.FindElement(By.LinkText("uk.customer.services@ipipeline.com")).Displayed.ToString();
+            string customerMail = driver.FindElement(By.LinkText("uk.support@ipipeline.com")).Displayed.ToString();
             return customerMail;
         }
 

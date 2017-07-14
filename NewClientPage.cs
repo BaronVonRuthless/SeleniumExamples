@@ -7,6 +7,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using Common;
 using RegManagerPageObjects;
+using RegManagerTESTS;
 using SolutionBuilderClientDetailsPageObjects;
 
 namespace SolutionBuilderClientDetailsTESTS
@@ -64,9 +65,8 @@ namespace SolutionBuilderClientDetailsTESTS
             var driver = Setup(appiumVersion, browserName, version, platform, platformVersion, platformName, deviceName, deviceOrientation);
 
             // Use login methods to call page, validate and attempt login
-            var login = new LoginPageObjects();
-            login.GetLoginPage(driver);
-            login.LoginValidUser(driver);
+            var login = new LoginPage();
+            login.LoginDefaultUser(driver);
 
             // Have we made it to My iPipeline Services?
             Assert.IsTrue(driver.Title.Contains("iPipeline - My iPipeline Services"));
