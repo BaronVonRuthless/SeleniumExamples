@@ -32,8 +32,6 @@ namespace Common
 
 
 
-
-
     public class AssertImage
     {
         public static void AreEqual(Bitmap expected, Bitmap actual, string message)

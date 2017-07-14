@@ -2,7 +2,7 @@
 {
     internal static class Constants
     {
-     
+
         //********************************************************************************
         //*****   VALUES USED TO CONTROL THE ENVIRONMENT UNDER TEST - HAVE AT 'EM!   *****
         //********************************************************************************
@@ -13,18 +13,17 @@
         //EXT Base URL:
         //internal const string ENV = "ext";
 
-
         //Username & Password:
-        internal const string USERNAME = "username";
-        internal const string PASSWORD = "password";
-
-        
+        internal const string USERNAME = "ncollins";
+        internal const string PASSWORD = "choir1234Jensen";
 
         //Specified Tunnel (Comment as required):
-            //*****SADE TUNNEL*****
-                internal const string SAUCE_LABS_SPECIFIED_TUNNEL = "tunnel-v4.3.13-SaDe";
-            //*****NON SADE TUNNEL*****
-                //internal const string SAUCE_LABS_SPECIFIED_TUNNEL = "tunnel-v4.3.4-NonSaDe";
+            //*****EXT TUNNEL*****
+            //internal const string SAUCE_LABS_SPECIFIED_TUNNEL = "";    
+                //*****SADE TUNNEL*****
+                internal const string SAUCE_LABS_SPECIFIED_TUNNEL = "tunnel-v4.4.4-SaDe"; // ---> MUST be used for Android tests in EXT/LIVE due to forced security exception.
+                    //*****NON SADE TUNNEL*****
+                    //internal const string SAUCE_LABS_SPECIFIED_TUNNEL = "tunnel-v4.3.4-NonSaDe";
         
         
 
@@ -40,8 +39,8 @@
         // - this is Openworks FCA number, used for access to the Registration Page
 
         //SauceLabs account details:
-        internal const string SAUCE_LABS_ACCOUNT_NAME = "companylogin";
-        internal const string SAUCE_LABS_ACCOUNT_KEY = "accesskey";
+        internal const string SAUCE_LABS_ACCOUNT_NAME = "ipipelineuk";
+        internal const string SAUCE_LABS_ACCOUNT_KEY = "badd14c1-a5e6-414b-a273-310213f73254";
 
         //Other environment variables: 
         internal const string BASEURL = "https://" + ENV + ".ipipeline.uk.com/";

@@ -137,7 +137,9 @@ namespace Common
             //Read the text from the benefit title bar in the full details modal and return
             public string FullDetailsReadTitleSingle(IWebDriver driver)
             {
-                var benefitTitle = driver.FindElement(By.Id("resultsSummaryInputsBenefitTitle")).Text;
+                //var benefitTitle = driver.FindElement(By.Id("resultsSummaryInputsBenefitTitle")).Text;
+                var benefitTitle = driver.FindElement(By.Id("resultsInputBenefitSummaryTitle")).Text;
+
                 return benefitTitle.ToString();
             }
             

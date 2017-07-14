@@ -173,13 +173,13 @@ namespace Common
 
             //Wait for overlay to load
             driver.WaitForUpTo(60, "Still no overlay")
-            .Until(ExpectedConditions.ElementExists(By.XPath("html/body/div[5]/div/div")));
+            .Until(ExpectedConditions.ElementExists(By.XPath("html/body/div[2]/hidden/div/div/button")));
         }
 
 
-        ////OPEN HELP OVERLAY - BENEFITS
+        ////OPEN HELP OVERLAY - VALIDATE BY ID
         //Find and click the help link
-        public void HelpOverlayOpenBenefits(IWebDriver driver)
+        public void HelpOverlayOpenValidateById(IWebDriver driver, string validationElement)
         {
             //Set element to use AND alternative element
             string standardElement = "showHelpButton";
@@ -191,13 +191,13 @@ namespace Common
 
             //Wait for overlay to load
             driver.WaitForUpTo(60, "Still no overlay")
-            .Until(ExpectedConditions.ElementExists(By.XPath("html/body/div[6]/div/div")));
+            .Until(ExpectedConditions.ElementExists(By.Id(validationElement)));
         }
 
 
-        ////OPEN HELP OVERLAY - RESULTS
+        ////OPEN HELP OVERLAY - VALIDATE BY PATH
         //Find and click the help link
-        public void HelpOverlayOpenResults(IWebDriver driver)
+        public void HelpOverlayOpenValidateByPath(IWebDriver driver, string validationPath)
         {
             //Set element to use AND alternative element
             string standardElement = "showHelpButton";
@@ -208,19 +208,19 @@ namespace Common
             common.ElementIsPresentClick(driver, standardElement, alternativeElement);
 
             //Wait for overlay to load
-            driver.WaitForUpTo(60, "Still no overlay")
-            .Until(ExpectedConditions.ElementExists(By.XPath("html/body/div[7]/div")));
+            driver.WaitForUpTo(30, "Still no overlay")
+            .Until(ExpectedConditions.ElementExists(By.XPath(validationPath)));
         }
 
 
 
-        ////CLOSE HELP OVERLAY CLOSE
+        ////CLOSE HELP OVERLAY CLOSE - GENERIC
         //Find and click the Got It! link
-        public void HelpOverlayClose(IWebDriver driver, string pageValidator)
+        public void HelpOverlayCloseGeneric(IWebDriver driver, string pageValidator)
         {
             //Locate link and click
-            //var gotIt = driver.FindElement(By.XPath("html/body/div[1]/div[1]/button"));
-            var gotIt = driver.FindElement(By.XPath("html/body/div[1]/hidden/div/div/button"));
+            //var gotIt = driver.FindElement(By.XPath("html/body/div[1]/hidden/div/div/button"));
+            var gotIt = driver.FindElement(By.XPath("html/body/div[2]/hidden/div/div/button"));
 
             var common = new CommonSupportObjects();
             common.TabletClick(gotIt, driver);
@@ -230,6 +230,26 @@ namespace Common
             //driver.WaitForUpTo(30, "Frozen in a helpfull wasteland")
             //.Until(ExpectedConditions.ElementExists(By.Id(pageValidator)));
         }
+
+        ////CLOSE HELP OVERLAY CLOSE - SPECIFIED
+        //Find and click the Got It! link
+        public void HelpOverlayCloseSpecified(IWebDriver driver, string pageValidator, string buttonPath)
+        {
+            //Locate link and click
+            //var gotIt = driver.FindElement(By.XPath("html/body/div[1]/div[1]/button"));
+            var gotIt = driver.FindElement(By.XPath(buttonPath));
+
+            var common = new CommonSupportObjects();
+            common.TabletClick(gotIt, driver);
+
+            //Wait for page to return:
+            GenericWait(driver, pageValidator);
+            //driver.WaitForUpTo(30, "Frozen in a helpfull wasteland")
+            //.Until(ExpectedConditions.ElementExists(By.Id(pageValidator)));
+        }
+
+
+
 
         ////LINK TO LOGOUT
         //Find and click LOGOUT button, wait for dialogue

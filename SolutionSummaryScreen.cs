@@ -38,7 +38,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
 
             //Assert popOver
             string popOver = driver.FindElement(By.ClassName("popover-content")).Text.Trim();
-            Assert.AreEqual(popOver, "Solution Added – Click here to review");
+            Assert.AreEqual(popOver, "Solution Added – Click here to review and get your application pack");
 
             //Assert CountBadge
             var solutionSummaryObjects = new SolutionSummaryPageObjects();

@@ -200,7 +200,7 @@ namespace SolutionBuilderQuoteDetailsTESTS
             //Re-select logout and exit
             common.LogoutButton(driver);
             common.DialogueYes(driver);
-            string pageValidator = "UserName";
+            string pageValidator = "username";
             common.GenericWait(driver, pageValidator);
 
             //Validate login page reached.
@@ -275,9 +275,10 @@ namespace SolutionBuilderQuoteDetailsTESTS
 
             //Click help icon
             var common = new CommonSolutionBuilderPageObjects();
-            common.HelpOverlayOpenResults(driver);
+            string validationPath = "html/body/div[7]/div";
+            common.HelpOverlayOpenValidateByPath(driver, validationPath);
             string pageValidator = "resultsSummaryFullDetails";
-            common.HelpOverlayClose(driver, pageValidator);
+            common.HelpOverlayCloseGeneric(driver, pageValidator);
             Assert.IsTrue(driver.Title.Equals("Solution Builder"));
 
             //Call Cleanup
